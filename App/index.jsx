@@ -39,7 +39,7 @@ var routeIndex = 0
 function scroll() {
   try {
     document.getElementsByClassName('wrapper')[0].scrollTo(0, 0)
-  } catch (e) {}
+  } catch (e) { }
 }
 
 var errorTimer
@@ -68,7 +68,7 @@ function setIntervalDebounced(action, interval) {
 
 // continually poll the dashboard counters
 function loadDashboardCounters() {
-  return http.get('DashboardCounters', function(err, data) {
+  return http.get('DashboardCounters', function (err, data) {
     dashboardCounters = data
     unfilteredDashboardCounters = data
     dashboardCounters.simpleGrainStats = unfilteredDashboardCounters.simpleGrainStats.filter(
@@ -80,9 +80,9 @@ function loadDashboardCounters() {
 
 function getVersion() {
   var version = '2'
-  var renderVersion = function() {
+  var renderVersion = function () {
     ReactDom.render(
-      <span id="version" style={{marginLeft:40}}>
+      <span id="version" style={{ marginLeft: 40 }}>
         v.{version}
         <i
           style={{ marginLeft: '12px', marginRight: '5px' }}
@@ -99,8 +99,8 @@ function getVersion() {
     )
   }
 
-  var loadData = function(cb) {
-    http.get('version', function(err, data) {
+  var loadData = function (cb) {
+    http.get('version', function (err, data) {
       version = data.version
       renderVersion()
     })
@@ -111,7 +111,7 @@ function getVersion() {
 // we always want to refresh the dashboard counters
 setIntervalDebounced(loadDashboardCounters, 1000)
 loadDashboardCounters()
-var render = () => {}
+var render = () => { }
 
 function renderLoading() {
   ReactDom.render(<Loading />, target)
@@ -129,7 +129,7 @@ function renderPage(jsx, path) {
   ReactDom.render(<Menu menu={menu} />, menuElement)
 }
 
-routie('', function() {
+routie('', function () {
   var thisRouteIndex = ++routeIndex
   events.clearAll()
   scroll()
@@ -139,12 +139,12 @@ routie('', function() {
   var grainMethodStats = []
   var unfiltedMethodStats = []
   var loadDataIsPending = false;
-  var loadData = function(cb) {
+  var loadData = function (cb) {
     if (!loadDataIsPending) {
       loadDataIsPending = true;
-      http.get('ClusterStats', function(err, data) {
+      http.get('ClusterStats', function (err, data) {
         clusterStats = data
-        http.get('TopGrainMethods', function(err, grainMethodsData) {
+        http.get('TopGrainMethods', function (err, grainMethodsData) {
           grainMethodStats = grainMethodsData
           unfiltedMethodStats = grainMethodsData
           grainMethodStats.calls = unfiltedMethodStats.calls.filter(
@@ -162,7 +162,7 @@ routie('', function() {
     }
   }
 
-  render = function() {
+  render = function () {
     if (routeIndex != thisRouteIndex) return
     renderPage(
       <Page title="Overview">
@@ -181,13 +181,13 @@ routie('', function() {
   loadDashboardCounters()
 })
 
-routie('/grains', function() {
+routie('/grains', function () {
   var thisRouteIndex = ++routeIndex
   events.clearAll()
   scroll()
   renderLoading()
 
-  render = function() {
+  render = function () {
     if (routeIndex != thisRouteIndex) return
     renderPage(
       <Page title="Grains">
@@ -203,13 +203,13 @@ routie('/grains', function() {
   loadDashboardCounters()
 })
 
-routie('/silos', function() {
+routie('/silos', function () {
   var thisRouteIndex = ++routeIndex
   events.clearAll()
   scroll()
   renderLoading()
 
-  render = function() {
+  render = function () {
     if (routeIndex != thisRouteIndex) return
     renderPage(
       <Page title="Silos">
@@ -225,7 +225,7 @@ routie('/silos', function() {
   loadDashboardCounters()
 })
 
-routie('/host/:host', function(host) {
+routie('/host/:host', function (host) {
   var thisRouteIndex = ++routeIndex
   events.clearAll()
   scroll()
@@ -235,7 +235,7 @@ routie('/host/:host', function(host) {
 
   var siloData = []
   var siloStats = []
-  var loadData = function(cb) {
+  var loadData = function (cb) {
     http.get(`HistoricalStats/${host}`, (err, data) => {
       siloData = data
       render()
@@ -246,17 +246,17 @@ routie('/host/:host', function(host) {
     })
   }
 
-  var renderOverloaded = function() {
-      if (!siloData.length) return null
-      if (!siloData[siloData.length - 1]) return null
-      if (!siloData[siloData.length - 1].isOverloaded) return null
-      return (
-        <small>
-          <span className="label label-danger">OVERLOADED</span>
-        </small>
-      )
-    },
-    render = function() {
+  var renderOverloaded = function () {
+    if (!siloData.length) return null
+    if (!siloData[siloData.length - 1]) return null
+    if (!siloData[siloData.length - 1].isOverloaded) return null
+    return (
+      <small>
+        <span className="label label-danger">OVERLOADED</span>
+      </small>
+    )
+  },
+    render = function () {
       if (routeIndex != thisRouteIndex) return
       var silo =
         (dashboardCounters.hosts || []).filter(
@@ -284,13 +284,13 @@ routie('/host/:host', function(host) {
   events.on('dashboard-counters', render)
   events.on('refresh', loadData)
 
-  http.get('SiloProperties/' + host, function(err, data) {
+  http.get('SiloProperties/' + host, function (err, data) {
     siloProperties = data
     loadData()
   })
 })
 
-routie('/host/:host/counters', function(host) {
+routie('/host/:host/counters', function (host) {
   var thisRouteIndex = ++routeIndex
   events.clearAll()
   scroll()
@@ -312,7 +312,7 @@ routie('/host/:host/counters', function(host) {
   })
 })
 
-routie('/grain/:grainType', function(grainType) {
+routie('/grain/:grainType', function (grainType) {
   var thisRouteIndex = ++routeIndex
   events.clearAll()
   scroll()
@@ -320,16 +320,16 @@ routie('/grain/:grainType', function(grainType) {
 
   var grainStats = {}
   var loadDataIsPending = false;
-  var loadData = function(cb) {
+  var loadData = function (cb) {
     if (!loadDataIsPending) {
-      http.get('GrainStats/' + grainType, function(err, data) {
+      http.get('GrainStats/' + grainType, function (err, data) {
         grainStats = data
         render()
       }).finally(() => loadDataIsPending = false);
     }
   }
 
-  render = function() {
+  render = function () {
     if (routeIndex != thisRouteIndex) return
     renderPage(
       <Grain
@@ -347,7 +347,7 @@ routie('/grain/:grainType', function(grainType) {
   loadData()
 })
 
-routie('/reminders/:page?', function(page) {
+routie('/reminders/:page?', function (page) {
   var thisRouteIndex = ++routeIndex
   events.clearAll()
   scroll()
@@ -360,7 +360,7 @@ routie('/reminders/:page?', function(page) {
     page = 1
   }
 
-  var renderReminders = function() {
+  var renderReminders = function () {
     if (routeIndex != thisRouteIndex) return
     renderPage(
       <Page title="Reminders">
@@ -370,15 +370,15 @@ routie('/reminders/:page?', function(page) {
     )
   }
 
-  var rerouteToLastPage = function(lastPage) {
+  var rerouteToLastPage = function (lastPage) {
     return (document.location.hash = `/reminders/${lastPage}`)
   }
 
   var loadDataIsPending = false;
-  var loadData = function(cb) {
+  var loadData = function (cb) {
     if (!loadDataIsPending) {
       loadDataIsPending = true;
-      http.get(`Reminders/${page}`, function(err, data) {
+      http.get(`Reminders/${page}`, function (err, data) {
         remindersData = data
         renderReminders()
       }).finally(() => loadDataIsPending = false);
@@ -390,7 +390,7 @@ routie('/reminders/:page?', function(page) {
   loadData()
 })
 
-routie('/trace', function() {
+routie('/trace', function () {
   var thisRouteIndex = ++routeIndex
   events.clearAll()
   scroll()
@@ -398,7 +398,7 @@ routie('/trace', function() {
   renderPage(<LogStream xhr={xhr} />, '#/trace')
 })
 
-routie('/preferences', function() {
+routie('/preferences', function () {
   var thisRouteIndex = ++routeIndex
   events.clearAll()
   scroll()
@@ -431,7 +431,7 @@ routie('/preferences', function() {
     events.emit('dashboard-counters', dashboardCounters)
   }
 
-  render = function() {
+  render = function () {
     if (routeIndex != thisRouteIndex) return
     renderPage(
       <Page title="Preferences">
